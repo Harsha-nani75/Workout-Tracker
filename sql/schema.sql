@@ -1,0 +1,50 @@
+CREATE DATABASE IF NOT EXISTS workout_db;
+USE workout_db;
+
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE exercises (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  category VARCHAR(100),
+  muscle_group VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE workouts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(255),
+  notes TEXT,
+  scheduled_at DATETIME NULL,
+  status VARCHAR(50) DEFAULT 'planned',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE workout_exercises (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  workout_id INT NOT NULL,
+  exercise_id INT NOT NULL,
+  sets INT DEFAULT 3,
+  reps INT DEFAULT 10,
+  weight DECIMAL(8,2) DEFAULT 0,
+  notes TEXT,
+  FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE,
+  FOREIGN KEY (exercise_id) REFERENCES exercises(id) ON DELETE CASCADE
+);
+
+CREATE TABLE workout_logs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  workout_id INT NOT NULL,
+  performed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  summary TEXT,
+  FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
+);
